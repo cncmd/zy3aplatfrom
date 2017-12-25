@@ -1,0 +1,30 @@
+##########
+####  wangwenbo@alibaba-inc.com
+##########
+
+include ./make.inc
+
+WORKSPACE=.
+TMP=$(WORKSPACE)/build/main.groovy
+
+VERSION=1.0.0.2
+OS=`uname -s`
+CYGWIN_NT="CYGWIN_NT-10.0"
+$(TMP):clean
+	[ -d "./build" ] && echo "has dist dir" || mkdir -p ./build
+
+####all build 
+concat:$(TMP)
+	echo -e "//verion=$(VERSION) \n" > $(TMP)
+	$(call __definedir__,$(WORKSPACE)/com/agent/, $(TMP));
+	$(call __define__,$(WORKSPACE)/com/agent/,main.groovy, $(TMP));
+
+###repalce 
+replace:
+	$(call __replaceOtherImport__ ,$(TMP))
+	
+clean:
+	rm -f $(WORKSPACE)/build/*.groovy
+
+all:clean concat replace
+	echo "done";
