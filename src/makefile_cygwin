@@ -17,14 +17,15 @@ $(TMP):clean
 concat:$(TMP)
 	echo -e "//verion=$(VERSION) \n" > $(TMP)
 	$(call __definedir__,$(WORKSPACE)/com/agent/, $(TMP));
-	$(call __define__,$(WORKSPACE)/com/agent/,main.groovy, $(TMP));
 
 ###repalce 
 replace:
 	$(call __replaceWindowsImport__ ,$(TMP))
 	
 clean:
-	rm -f $(WORKSPACE)/build/*.code
+	rm -rf $(WORKSPACE)/build/* 
 
 all:clean concat replace
+	cd ./build && /bin/groovy/bin/groovyc main.groovy && rm -f $(TMP)
+	tar zcf app.tar.gz ./build && rm -rf ./build/* && cp app.tar.gz ./build
 	echo "done";
