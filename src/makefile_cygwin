@@ -27,5 +27,5 @@ clean:
 
 all:clean concat replace
 	cd ./build && /bin/groovy/bin/groovyc main.groovy && rm -f $(TMP)
-	tar zcf app.tar.gz ./build && rm -rf ./build/* && cp app.tar.gz ./build
+	tar zcf app.jar ./build && rm -rf ./build/* && mv app.jar ./build
 	echo "done";
