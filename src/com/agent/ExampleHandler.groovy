@@ -8,11 +8,11 @@ import  java.util.concurrent.TimeUnit
 
 class ExampleHandler extends BaseHandler {
     def invoke() {
-        
-//        return Response.format(0,"succ", ["greeting":"hellow I am groovy"])
-        return Response.format(0,"succ", testGuava())
+        def response = [:]
+        response["guava"] = testGuava()
+        return Response.format(0,"succ", response)
     }
-    
+    ////guava support
     def testGuava () {
         def collectedNewsCache = CacheBuilder.newBuilder()
         .maximumSize(1)

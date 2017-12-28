@@ -1,1 +1,13 @@
-1  支持 guava 
+1  支持 guava [ok]
+
+2  支持 SSDB 替换 tair ldb [ok]
+
+3  支持 tair rdb 
+
+4  支持 redis
+
+5  支持 mongodb 替换 ldb 
+
+6  支持oss
+
+
