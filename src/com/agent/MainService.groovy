@@ -1,13 +1,11 @@
 package com.agent
 import java.util.Map;
 import nginx.clojure.java.NginxJavaRingHandler;
-import com.agent.handler.Response;
 import java.net.URLDecoder;
 /***
  * 程序入口 
  * @author agent.zy
  */
-
 public class MainService implements NginxJavaRingHandler {
     public Object[] invoke(Map<String, Object> request){
         def context = null
@@ -30,34 +28,33 @@ public class MainService implements NginxJavaRingHandler {
         return response
     }
     
-    def listKey(list) {
-        return list
-    }
-    
     ///get Context
     def getContext (owner) {
-        def query = owner['query-string']
+        /***
+         * 因为处理post会影响到ngx的性能所以不处理post的方式
+         */
+        def context = [:]
+        def query   = owner['query-string']
         
-        if(!query) {
+        if(query) {
+           def size = query.length()
+           if(size > 4000) { /**最小8K参数*/
+               return null
+           }
+           if(size > 10) {/**协议必须大于10*/
+               def queryString = URLDecoder.decode(query[5..-1],"UTF-8");
+               context.param   = Env.json_decode(queryString);
+           } 
+        }
+        
+        if(!context.param) {
             return null
         }
-        def context     = [:]
         
-        def queryString = URLDecoder.decode(query[5..-1],"UTF-8");
-        context.param   = Env.json_decode(queryString);
-        
-        if(!context) {
-            context['a'] = queryString
-            return context
+        if(!context.param.api) {/**协议必须要有api字段*/
+            return null
         }
-        
-        if(context['api']) {
-            context.api   =  context.api
-        }
-        
-        if(context['param']) {
-            context.param =  context.param
-        }
+        context.api    = context.param.api
         context.header = owner.headers
         return context;
     }
