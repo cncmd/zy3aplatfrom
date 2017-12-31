@@ -7,6 +7,7 @@ import java.net.URLDecoder;
  * 程序入口 
  * @author agent.zy
  */
+
 public class MainService implements NginxJavaRingHandler {
     public Object[] invoke(Map<String, Object> request){
         def context = null
@@ -15,8 +16,7 @@ public class MainService implements NginxJavaRingHandler {
            if(!context) {
                return Response.format(-1, "not find context")
            }
-           def handler  = HandlerFactory.getHandler(context.api)
-           
+           def handler  = HandlerFactory.getHandler.call(context.api)
            if(!handler) {
                return Response.format(-1, "not find service")
            }
@@ -25,7 +25,7 @@ public class MainService implements NginxJavaRingHandler {
            return handler.invoke()
            
         } catch (def e) {
-           return Response.format(-1, "service error", ["res":context, "desc":":${e.toString()}"])
+           return Response.format(-1, "service error", ["desc":":${e.toString()}"])
         }
         return response
     }
@@ -62,3 +62,4 @@ public class MainService implements NginxJavaRingHandler {
         return context;
     }
  }
+ 

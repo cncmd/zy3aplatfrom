@@ -4,10 +4,8 @@
 
 3  支持 tair rdb 
 
-4  支持 redis
+4  支持 redis 发布订阅 [ok]
 
-5  支持 mongodb 替换 ldb 
-
-6  支持oss
+5  支持oss [ok] 
 
 

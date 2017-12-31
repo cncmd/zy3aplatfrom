@@ -1,7 +1,8 @@
 package com.agent
 
 class HandlerFactory {
-    static IServiceHandler getHandler (owner) {
+    static def getHandler = {
+         owner ->
          return new ExampleHandler();
     }
 }
