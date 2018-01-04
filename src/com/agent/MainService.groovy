@@ -8,9 +8,8 @@ import java.net.URLDecoder;
  */
 public class MainService implements NginxJavaRingHandler {
     public Object[] invoke(Map<String, Object> request){
-        def context = null
         try {
-           context = getContext(request)
+           def context = getContext(request)
            if(!context) {
                return Response.format(-1, "not find context")
            }
@@ -21,13 +20,20 @@ public class MainService implements NginxJavaRingHandler {
            
            handler.ctx  = context
            return handler.invoke()
-           
         } catch (def e) {
            return Response.format(-1, "service error", ["desc":":${e.toString()}"])
         }
         return response
     }
-    
+    def getURLParams(str) {
+        def  ret    = [:]
+        def  buf    = str.tokenize("&");
+        for (def i=0; i<buf.size(); i++) {
+            def token = buf[i].tokenize("=")
+            ret[token[0]] = token[1]
+        }
+        return ret
+    }
     ///get Context
     def getContext (owner) {
         /***
@@ -36,20 +42,27 @@ public class MainService implements NginxJavaRingHandler {
         def context = [:]
         def query   = owner['query-string']
         
+         ///快速json通道
         if(query) {
-           def size = query.length()
-           if(size > 4000) { /**最小8K参数*/
-               return null
-           }
-           if(size > 10) {/**协议必须大于10*/
-               def queryString = URLDecoder.decode(query[5..-1],"UTF-8");
-               context.param   = Env.json_decode(queryString);
-           } 
+            def size = query.length()
+            if(size > 4000) { /**最小8K参数*/
+                return null
+            }
+            if(query[0..3] == "json") {/**协议必须大于10*/
+                def queryString = URLDecoder.decode(query[5..-1],"UTF-8");
+                context.param   = Env.json_decode(queryString);
+            } else {
+                context.param   = getURLParams (query)
+                def apiPosition = owner.uri.indexOf(".mxml") ///mxml的协议
+                 
+                if(apiPosition != -1) {
+                    context.param.api = owner.uri[1 .. apiPosition-1].replace("/", ".");
+                }
+            }
         }
-        
         if(!context.param) {
             return null
-        }
+        } 
         
         if(!context.param.api) {/**协议必须要有api字段*/
             return null

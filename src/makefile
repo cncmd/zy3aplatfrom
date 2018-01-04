@@ -16,6 +16,7 @@ $(TMP):clean
 concat:$(TMP)
 	echo -e "//verion=$(VERSION) \n" > $(TMP)
 	$(call __definedir__,$(WORKSPACE)/com/agent/, $(TMP));
+	$(call __definedir__,$(WORKSPACE)/com/agent/handler/, $(TMP));
 
 ###repalce 
 replace:
@@ -25,7 +26,7 @@ clean:
 	rm -rf $(WORKSPACE)/build/* 
 
 all:clean concat replace
-	cd ./build && /bin/groovy/bin/groovyc main.groovy && rm -f $(TMP)
+	cd ./build && /bin/groovy/bin/groovyc main.groovy && rm -f main.groovy
 	tar zcf $(TARGET) ./build && rm -rf ./build/* && mv $(TARGET) ./build
 	/bin/groovy/bin/groovy upload.groovy $(APPNAME) $(TARGET)
 	echo -e "done";

@@ -3,7 +3,6 @@ package com.agent
 import com.udpwork.ssdb.SSDB
 
 class TairManager {
-    
     SSDB ssdb = null
     def  ns   =""
     def  env  ="daily"
